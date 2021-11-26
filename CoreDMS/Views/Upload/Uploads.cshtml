@@ -44,7 +44,7 @@
                 removeEvents();
                 confirmButton.hide();
                 $.post(
-                    evt.toElement.previousElementSibling.pathname)
+                    evt.target.previousElementSibling.pathname)
                     .done(function () {
                         var parentRow = processLink.parents("tr:first");
                         parentRow.fadeOut('fast', function () {
@@ -101,7 +101,7 @@
                 removeEvents();
                 confirmButton.hide();
                 $.post(
-                    evt.toElement.previousElementSibling.pathname)
+                    evt.target.previousElementSibling.pathname)
                     .done(function () {
                         var parentRow = deleteLink.parents("tr:first");
                         parentRow.fadeOut('fast', function () {
