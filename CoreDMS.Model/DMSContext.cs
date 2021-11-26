@@ -7,6 +7,8 @@ namespace CoreDMS.Model
     public partial class DMSContext : DbContext
     {
         public virtual DbSet<Files> Files { get; set; }
+        public virtual DbSet<DocumentFiles> DocumentFiles { get; set; }
+        public virtual DbSet<DocumentFileFile> DocumentFileFiles { get; set; }
         public virtual DbSet<FileStates> FileStates { get; set; }
         public virtual DbSet<FileTag> FileTag { get; set; }
         public virtual DbSet<LogTable> LogTable { get; set; }
@@ -75,6 +77,29 @@ namespace CoreDMS.Model
                     .HasColumnType("DATETIME");
             });
 
+            modelBuilder.Entity<DocumentFiles>(entity =>
+            {
+                entity.Property(e => e.Id)
+                    .HasColumnName("id")
+                    .ValueGeneratedOnAdd();
+
+                entity.Property(e => e.CreatedAt)
+                    .IsRequired()
+                    .HasColumnName("createdAt")
+                    .HasColumnType("DATETIME");
+
+                entity.Property(e => e.UpdatedAt)
+                    .IsRequired()
+                    .HasColumnName("updatedAt")
+                    .HasColumnType("DATETIME");
+
+                entity.Property(e => e.Title)
+                    .IsRequired()
+                    .HasColumnName("title")
+                    .HasColumnType("VARCHAR(255)")
+                    .HasDefaultValueSql("`filename`");
+            });
+
             modelBuilder.Entity<FileStates>(entity =>
             {
                 entity.Property(e => e.Id)
@@ -96,8 +121,40 @@ namespace CoreDMS.Model
                     .HasColumnType("DATETIME");
             });
 
+            modelBuilder.Entity<DocumentFileFile>()
+            .ToTable("DocumentFileFile");
+            modelBuilder.Entity<DocumentFileFile>(entity => {
+                #region properties
+                entity.Property(e => e.Id)
+                    .HasColumnName("id")
+                    .ValueGeneratedOnAdd();
+
+                entity.Property(e => e.CreatedAt)
+                    .IsRequired()
+                    .HasColumnName("createdAt")
+                    .HasColumnType("DATETIME");
+
+                entity.Property(e => e.UpdatedAt)
+                    .IsRequired()
+                    .HasColumnName("updatedAt")
+                    .HasColumnType("DATETIME");
+                #endregion
+
+                #region relationships
+                entity.HasOne(d => d.File)
+                    .WithMany(p => p.DocumentFileFile)
+                    .HasForeignKey(d => d.FileId);
+
+                entity.HasOne(d => d.DocumentFile)
+                    .WithMany(p => p.DocumentFileFiles)
+                    .HasForeignKey(d => d.DocumentFileId)
+                    .OnDelete(DeleteBehavior.ClientSetNull);
+                #endregion
+            });
+
             modelBuilder.Entity<FileTag>(entity =>
             {
+                #region properties
                 entity.Property(e => e.Id)
                     .HasColumnName("id")
                     .ValueGeneratedOnAdd();
@@ -113,7 +170,9 @@ namespace CoreDMS.Model
                     .IsRequired()
                     .HasColumnName("updatedAt")
                     .HasColumnType("DATETIME");
+                #endregion
 
+                #region relationships
                 entity.HasOne(d => d.File)
                     .WithMany(p => p.FileTag)
                     .HasForeignKey(d => d.FileId);
@@ -122,6 +181,7 @@ namespace CoreDMS.Model
                     .WithMany(p => p.FileTag)
                     .HasForeignKey(d => d.TagId)
                     .OnDelete(DeleteBehavior.ClientSetNull);
+                #endregion
             });
 
             modelBuilder.Entity<LogTable>(entity =>

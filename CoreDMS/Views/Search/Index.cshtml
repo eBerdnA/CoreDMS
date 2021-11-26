@@ -153,9 +153,9 @@
             })
             .appendTo('#' + 'possible-tags')
             .click(function(evt) {
-                selectedTags.push(evt.toElement.innerText);
+                selectedTags.push(evt.target.innerText);
                 renderSelectedTags();
-                removeSelectedTagFromDom(evt.toElement.id);
+                removeSelectedTagFromDom(evt.target.id);
             })
         }
 
