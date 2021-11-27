@@ -9,8 +9,8 @@ namespace CoreDMS.ViewModels
     /// </summary>
     public class TagViewModel
     {
-        public string title;
-        public string tags;
-        public string location;
+        public string title {get; set;}
+        public string tags {get; set;}
+        public string location {get; set;}
     }
 }
