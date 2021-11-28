@@ -32,7 +32,7 @@ namespace CoreDMS.Controllers
         }
 
         [HttpPost("/file/{id}")]
-        public IActionResult Index(string fileid, int state, string tags, string documentdate, string note)
+        public IActionResult Index(string fileid, int state, string tags, string documentdate, string note, string filetitle)
         {
             var file = _dmsContext.Files
                 .Include(f => f.FileTag)
@@ -49,6 +49,7 @@ namespace CoreDMS.Controllers
 
             List<string> splittedTags = SplitTags(tags);
             file.Note = note;
+            file.Title = filetitle;
             _dmsContext.Database.BeginTransaction();
             try
             {
@@ -215,7 +216,7 @@ namespace CoreDMS.Controllers
         }
 
         [HttpGet("/file/tags/{id}")]
-        public JsonResult Tags(string id)
+        public IActionResult Tags(string id)
         {
             TagViewModel model = new TagViewModel();
             Files file = _dmsContext.Files
@@ -226,7 +227,7 @@ namespace CoreDMS.Controllers
             model.tags = BuildTagString(file.FileTag);
             model.title = file.Title;
             model.location = file.Location;
-            return Json(model);
+            return Ok(model);
         }
 
         [HttpPost("/file/delete/{id}")]

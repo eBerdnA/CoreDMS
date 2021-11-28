@@ -49,6 +49,7 @@ namespace CoreDMS
             logger.Information($"processed: {processed}");
 
             services.AddMvc(option => option.EnableEndpointRouting = false);
+            services.AddControllers().AddNewtonsoftJson();
             services.AddScoped<IViewRenderService, ViewRenderService>();
             services.TryAddSingleton<IHttpContextAccessor, HttpContextAccessor>();
             services.AddSingleton<ISettings>(new Settings(uploads, processed));

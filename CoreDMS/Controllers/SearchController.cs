@@ -29,28 +29,34 @@ namespace CoreDMS.Controllers
         [HttpPost("/search/find")]
         public async Task<string> Search([FromBody] List<Tag> tags)
         {
-            string[] tagArr = tags.Select(t => t.name).ToArray();
-            var tagsResult2 = (from t in _dmsContext.Tag
-                               where tagArr.Contains(t.Name)
-                               join filetag in _dmsContext.FileTag
-                                 on t.Id equals filetag.TagId
-                               join file in _dmsContext.Files
-                                 on filetag.FileId equals file.Id
-                               group filetag.FileId by filetag.FileId into grouped
-                               where grouped.Count() == tagArr.Length
-                               select grouped).ToArray();
-
-            List<string> fileIds = new List<string>();
-            foreach (IGrouping<string, string> item in tagsResult2)
+            var result = string.Empty;
+            if (tags != null)
             {
-                fileIds.Add(item.Key);
+                string[] tagArr = tags.Select(t => t.name).ToArray();
+                var tagsResult2 = (from t in _dmsContext.Tag
+                                where tagArr.Contains(t.Name)
+                                join filetag in _dmsContext.FileTag
+                                    on t.Id equals filetag.TagId
+                                join file in _dmsContext.Files
+                                    on filetag.FileId equals file.Id
+                                group filetag.FileId by filetag.FileId into grouped
+                                where grouped.Count() == tagArr.Length
+                                select grouped).ToArray();
+
+                List<string> fileIds = new List<string>();
+                foreach (IGrouping<string, string> item in tagsResult2)
+                {
+                    fileIds.Add(item.Key);
+                }
+
+                var files = (from f in _dmsContext.Files
+                            where fileIds.Contains(f.Id)
+                            select f).ToList();
+
+                result = await _viewRenderService.RenderToStringAsync("FilesPartial", files);
+            } else {
+                result = await _viewRenderService.RenderToStringAsync("NoTag", null);
             }
-
-            var files = (from f in _dmsContext.Files
-                         where fileIds.Contains(f.Id)
-                         select f).ToList();
-
-            var result = await _viewRenderService.RenderToStringAsync("FilesPartial", files);
             return result;
         }
 

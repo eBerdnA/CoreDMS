@@ -163,6 +163,7 @@ namespace CoreDMS.Controllers
                 
                 fileIds.Add(new Files{
                     Filename = file.File.Filename,
+                    Title = file.File.Title,
                     Hash = file.File.Hash,
                     CreatedAt = file.File.CreatedAt,
                     UpdatedAt = file.File.UpdatedAt,
