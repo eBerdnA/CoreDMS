@@ -63,6 +63,7 @@ export class DfService {
         return result.pipe(
                 map((item: any) => item.map(p => <DocumentFile> {
                     filename: p.filename,
+                    title: p.title,
                     id: p.id,
                     createdAt: p.createdAt,
                     updatedAt: p.updatedAt,

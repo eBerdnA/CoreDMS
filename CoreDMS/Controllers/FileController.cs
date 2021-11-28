@@ -32,7 +32,7 @@ namespace CoreDMS.Controllers
         }
 
         [HttpPost("/file/{id}")]
-        public IActionResult Index(string fileid, int state, string tags, string documentdate, string note)
+        public IActionResult Index(string fileid, int state, string tags, string documentdate, string note, string filetitle)
         {
             var file = _dmsContext.Files
                 .Include(f => f.FileTag)
@@ -49,6 +49,7 @@ namespace CoreDMS.Controllers
 
             List<string> splittedTags = SplitTags(tags);
             file.Note = note;
+            file.Title = filetitle;
             _dmsContext.Database.BeginTransaction();
             try
             {
